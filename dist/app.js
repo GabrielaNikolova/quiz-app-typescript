@@ -11,10 +11,10 @@ import { getFunction } from "./universalModule.js";
 const categoriesList = document.getElementById("category");
 const quizFilterForm = document.getElementById("filter");
 const startQuiz = document.getElementById("start-quiz");
-const nextQ = document.getElementById("nextq");
 const questionContainer = document.getElementById("q-container");
 const questionTitle = document.getElementById("question");
 const answersList = document.getElementById("answers-list");
+const nextQ = document.getElementById("nextq");
 const checkRes = document.getElementById("check");
 const results = document.getElementById("results");
 let i = 0;
@@ -35,7 +35,6 @@ function getCategories() {
                     category.textContent = c.name;
                     categoriesList === null || categoriesList === void 0 ? void 0 : categoriesList.appendChild(category);
                 });
-                console.log(categoriesList);
             }
         }
         catch (error) {
@@ -48,11 +47,8 @@ getCategories();
 function createEndpoint() {
     var _a, _b;
     let amount = (_a = document.getElementById("amount")) === null || _a === void 0 ? void 0 : _a.value;
-    console.log(amount);
     let category = categoriesList === null || categoriesList === void 0 ? void 0 : categoriesList.value;
-    console.log(category);
     let difficulty = (_b = document.getElementById("difficulty")) === null || _b === void 0 ? void 0 : _b.value;
-    console.log(difficulty);
     if (category === "any") {
         category = "";
     }
@@ -69,10 +65,6 @@ function createEndpoint() {
 }
 // function for generation of the quiz based on user input
 function generateQuiz() {
-    if (questionContainer && results) {
-        questionContainer.style.display = 'none';
-        results.style.display = 'none';
-    }
     quizFilterForm === null || quizFilterForm === void 0 ? void 0 : quizFilterForm.addEventListener("submit", (e) => __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
         let endpoint = createEndpoint();
@@ -84,7 +76,6 @@ function generateQuiz() {
                 allQuestions = questions.results;
                 // set item to local storage
                 localStorage.setItem("questions-list", JSON.stringify(allQuestions));
-                console.log(allQuestions);
             }
             if (startQuiz) {
                 startQuiz.style.display = '';
@@ -115,19 +106,18 @@ function displayQuestion(allQuestions) {
             questionTitle.innerHTML = allQuestions[i].question;
         }
         correct = allQuestions[i].correct_answer;
-        let incorrectAnswer = allQuestions[i].incorrect_answers;
-        let options = incorrectAnswer;
-        options.splice(Math.floor(Math.random() * (incorrectAnswer.length + 1)), 0, correct);
-        console.log(options);
+        let incorrectAnswers = allQuestions[i].incorrect_answers;
+        let options = incorrectAnswers;
+        options.splice(Math.floor(Math.random() * (incorrectAnswers.length + 1)), 0, correct);
         if (answersList) {
             answersList.innerHTML = ""; // Clear previous answers
         }
-        options.map((option, index) => {
+        options.map((option) => {
             const li = document.createElement("li");
             li.className = "radio-btn";
             const label = document.createElement("label");
             label.className = "answer";
-            label.innerHTML = `<input class="radio" type="radio" name="answer" value="${index + 1}"> ${option}`;
+            label.innerHTML = `<input class="radio" type="radio" name="answer"> ${option}`;
             li.appendChild(label);
             answersList === null || answersList === void 0 ? void 0 : answersList.appendChild(li);
         });
