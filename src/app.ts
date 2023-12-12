@@ -194,7 +194,6 @@ checkRes?.addEventListener("click", (e) => {
 
 // check results function
 function checkResult() {
-    let count = 0;
     let rightAns = 0;
 
     // get data from localStorage
@@ -210,27 +209,23 @@ function checkResult() {
 
     // compare data
     questionsCorrectAnswers.forEach((a: QCorrectAns) => {
-        count++;
         if (answered.includes(a.correct_answer)) {
             rightAns++;
         }
     });
 
     // display results
-    displayResults(rightAns, count, questionsCorrectAnswers, answered);
+    displayResults(rightAns, questionsCorrectAnswers, answered);
 }
 
 // display results function
-function displayResults(rightAns: number, count: number, questionsCorrectAnswers: QCorrectAns[], answered: string[]) {
+function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[], answered: string[]) {
     if (questionContainer) {
         questionContainer.style.display = "none";
     }
     if (results) {
         results.style.display = '';
     }
-
-    const div = document.createElement("div");
-    div.className = "result-buttons";
 
     const newGameBtn = document.createElement("button");
     newGameBtn.className = "new-game button";
@@ -245,13 +240,11 @@ function displayResults(rightAns: number, count: number, questionsCorrectAnswers
 
     const p = document.createElement("p");
     p.className = "result";
-    p.innerHTML = `Your score is ${rightAns} correct answer/s out of ${count} questions!<br><br>${text.join('')}`;
+    p.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length} questions!<br><br>${text.join('')}`;
 
 
-    div.appendChild(newGameBtn);
-    results?.appendChild(div);
+    results?.appendChild(newGameBtn);
     results?.appendChild(p);
-
 
     // reset game
     resetQuiz(newGameBtn);
