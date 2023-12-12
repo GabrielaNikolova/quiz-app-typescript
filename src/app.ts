@@ -278,7 +278,7 @@ function resetQuiz(newGameBtn: Button) {
     });
 }
 
-// to convert html entities into normal text
+// to convert html text into normal text
 function HTMLDecode(textString: string) {
     let doc = new DOMParser().parseFromString(textString, "text/html");
     return doc.documentElement.textContent;
