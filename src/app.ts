@@ -1,4 +1,5 @@
-import { getFunction } from "./universalModule.js";
+import { getFunction } from "./universalModule";
+import { encryptData, decryptQuestions, decryptAnswers } from "./dataEncryption";
 
 type Input = HTMLInputElement | undefined;
 type Options = HTMLOptionElement | undefined;
@@ -86,7 +87,8 @@ function generateQuiz() {
                 allQuestions = questions.results;
 
                 // set item to local storage
-                localStorage.setItem("questions-list", JSON.stringify(allQuestions));
+                encryptData("questions-list", allQuestions);
+                // localStorage.setItem("questions-list", JSON.stringify(allQuestions));
             }
 
             if (startQuiz) {
@@ -153,12 +155,14 @@ function checkIfSelected(variable: Array<Question> | "", func1: (variable: Array
         if (alert) {
             alert.remove();
         }
-        
+
         //save answers to localStorage
         if (checked?.parentNode?.textContent) {
             selectedAnswers.push(checked.parentNode.textContent.trim());
         }
-        localStorage.setItem("answers", JSON.stringify(Array.from(selectedAnswers)));
+
+        encryptData("answers", selectedAnswers)
+        // localStorage.setItem("answers", JSON.stringify(Array.from(selectedAnswers)));
 
         func1(variable);
 
@@ -197,17 +201,23 @@ function checkResult() {
     let rightAns = 0;
 
     // get data from localStorage
-    let questionsCorrectAnswers: Array<QCorrectAns> = JSON.parse(
-        localStorage.getItem("questions-list") || "").map((q: Question) => {
-            let question = {
-                question: HTMLDecode(q.question),
-                correct_answer: HTMLDecode(q.correct_answer)
-            }
-            return question;
-        });
-    let answered: Array<string> = JSON.parse(localStorage.getItem("answers") || "");
+    let questionsCorrectAnswers = decryptQuestions("questions-list");
+
+    // let questionsCorrectAnswers: Array<QCorrectAns> = JSON.parse(
+    //     localStorage.getItem("questions-list") || "").map((q: Question) => {
+    //         let question = {
+    //             question: HTMLDecode(q.question),
+    //             correct_answer: HTMLDecode(q.correct_answer)
+    //         }
+    //         return question;
+    //     });
+
+    let answered = decryptAnswers("answers");
+
+    // let answered: Array<string> = JSON.parse(localStorage.getItem("answers") || "");
 
     // compare data
+    questionsCorrectAnswers as QCorrectAns[];
     questionsCorrectAnswers.forEach((a: QCorrectAns) => {
         if (answered.includes(a.correct_answer)) {
             rightAns++;
@@ -216,6 +226,7 @@ function checkResult() {
 
     // display results
     displayResults(rightAns, questionsCorrectAnswers, answered);
+
 }
 
 // display results function
@@ -271,6 +282,7 @@ function resetQuiz(newGameBtn: Button) {
             checkRes.style.display = 'none';
             results.innerHTML = "";
             localStorage.removeItem("answers");
+            localStorage.removeItem("questions-list");
 
             questionContainer.style.display = 'none';
             results.style.display = 'none';
