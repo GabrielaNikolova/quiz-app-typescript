@@ -9,10 +9,10 @@ type Form = HTMLFormElement | undefined;
 const categoriesList = document.getElementById("category") as HTMLSelectElement | undefined;
 const quizFilterForm = document.getElementById("filter") as Form;
 const startQuiz = document.getElementById("start-quiz") as Button;
-const nextQ = document.getElementById("nextq") as Button;
 const questionContainer = document.getElementById("q-container") as Element;
 const questionTitle = document.getElementById("question") as HTMLHeadingElement | undefined;
 const answersList = document.getElementById("answers-list") as HTMLUListElement | undefined;
+const nextQ = document.getElementById("nextq") as Button;
 const checkRes = document.getElementById("check") as Button;
 const results = document.getElementById("results") as Element;
 
@@ -26,7 +26,9 @@ let correct: string = "";
 async function getCategories() {
     try {
         const endpoint = "api_category.php"
+
         let categories = await getFunction(endpoint);
+
         if ('trivia_categories' in categories) {
             categories as Categories;
 
@@ -36,8 +38,6 @@ async function getCategories() {
                 category.textContent = c.name;
                 categoriesList?.appendChild(category);
             });
-            console.log(categoriesList);
-
         }
 
     } catch (error) {
@@ -46,15 +46,13 @@ async function getCategories() {
 }
 getCategories();
 
+
 // function for creating the endpoint according to user input
 function createEndpoint() {
 
     let amount = (document.getElementById("amount") as Input)?.value;
-    console.log(amount);
     let category = categoriesList?.value;
-    console.log(category);
     let difficulty = (document.getElementById("difficulty") as Options)?.value;
-    console.log(difficulty);
 
     if (category === "any") {
         category = "";
@@ -74,10 +72,6 @@ function createEndpoint() {
 
 // function for generation of the quiz based on user input
 function generateQuiz() {
-    if (questionContainer && results) {
-        questionContainer.style.display = 'none';
-        results.style.display = 'none';
-    }
 
     quizFilterForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -93,8 +87,6 @@ function generateQuiz() {
 
                 // set item to local storage
                 localStorage.setItem("questions-list", JSON.stringify(allQuestions));
-
-                console.log(allQuestions);
             }
 
             if (startQuiz) {
@@ -130,21 +122,20 @@ function displayQuestion(allQuestions: Array<Question> | "") {
         }
 
         correct = allQuestions[i].correct_answer;
-        let incorrectAnswer = allQuestions[i].incorrect_answers;
-        let options = incorrectAnswer;
-        options.splice(Math.floor(Math.random() * (incorrectAnswer.length + 1)), 0, correct);
-        console.log(options);
+        let incorrectAnswers = allQuestions[i].incorrect_answers;
+        let options = incorrectAnswers;
+        options.splice(Math.floor(Math.random() * (incorrectAnswers.length + 1)), 0, correct);
 
         if (answersList) {
             answersList.innerHTML = ""; // Clear previous answers
         }
 
-        options.map((option, index) => {
+        options.map((option) => {
             const li = document.createElement("li");
             li.className = "radio-btn";
             const label = document.createElement("label");
             label.className = "answer";
-            label.innerHTML = `<input class="radio" type="radio" name="answer" value="${index + 1}"> ${option}`;
+            label.innerHTML = `<input class="radio" type="radio" name="answer"> ${option}`;
             li.appendChild(label);
             answersList?.appendChild(li);
         });
@@ -154,7 +145,7 @@ function displayQuestion(allQuestions: Array<Question> | "") {
 //function for checking if there is a selected answer
 function checkIfSelected(variable: Array<Question> | "", func1: (variable: Array<Question> | "") => void) {
 
-    let checked = document.querySelector('input[name = "answer"]:checked') as HTMLInputElement | undefined;
+    let checked = document.querySelector('input[name = "answer"]:checked') as Input;
 
     if (checked) {
         //Test if something was checked
@@ -169,8 +160,8 @@ function checkIfSelected(variable: Array<Question> | "", func1: (variable: Array
         }
         localStorage.setItem("answers", JSON.stringify(Array.from(selectedAnswers)));
 
-
         func1(variable);
+
     } else {
         const p = document.createElement("p");
         p.id = "alert";

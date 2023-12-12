@@ -28,18 +28,18 @@ export const getFunction = (endpoint) => {
     const headers = createHeadersFn('GET', '');
     return fetchFn(endpoint, headers);
 };
-// Function for making a POST request
-export const postFunction = (endpoint, body) => {
-    const headers = createHeadersFn('POST', body);
-    return fetchFn(endpoint, headers);
-};
-// Function for making a PUT request
-export const putFunction = (endpoint, body) => {
-    const headers = createHeadersFn('PUT', body);
-    return fetchFn(endpoint, headers);
-};
-// Function for making a DELETE request
-export const deleteFunction = (endpoint) => {
-    const headers = createHeadersFn('DELETE', '');
-    return fetchFn(endpoint, headers);
-};
+// // Function for making a POST request
+// export const postFunction = (endpoint: Endpoint, body: object) => {
+//     const headers = createHeadersFn('POST', body);
+//     return fetchFn(endpoint, headers);
+// }
+// // Function for making a PUT request
+// export const putFunction = (endpoint: Endpoint, body: object) => {
+//     const headers = createHeadersFn('PUT', body);
+//     return fetchFn(endpoint, headers);
+// }
+// // Function for making a DELETE request
+// export const deleteFunction = (endpoint: Endpoint) => {
+//     const headers = createHeadersFn('DELETE', '');
+//     return fetchFn(endpoint, headers);
+// }
