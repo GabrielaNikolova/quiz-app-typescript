@@ -162,7 +162,6 @@ function checkIfSelected(variable: Array<Question> | "", func1: (variable: Array
         }
 
         encryptData("answers", selectedAnswers)
-        // localStorage.setItem("answers", JSON.stringify(Array.from(selectedAnswers)));
 
         func1(variable);
 
@@ -202,19 +201,14 @@ function checkResult() {
 
     // get data from localStorage
     let questionsCorrectAnswers = decryptQuestions("questions-list");
-
-    // let questionsCorrectAnswers: Array<QCorrectAns> = JSON.parse(
-    //     localStorage.getItem("questions-list") || "").map((q: Question) => {
-    //         let question = {
-    //             question: HTMLDecode(q.question),
-    //             correct_answer: HTMLDecode(q.correct_answer)
-    //         }
-    //         return question;
-    //     });
-
+    questionsCorrectAnswers.map((q) => {
+        let question = {
+            title: HTMLDecode(q.question),
+            correctAnswer: HTMLDecode(q.correct_answer)
+        }
+        return question;
+    });
     let answered = decryptAnswers("answers");
-
-    // let answered: Array<string> = JSON.parse(localStorage.getItem("answers") || "");
 
     // compare data
     questionsCorrectAnswers as QCorrectAns[];
@@ -243,22 +237,48 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
     newGameBtn.id = "new-game";
     newGameBtn.textContent = "New Game!";
 
+    const downloadBtn = document.createElement("button");
+    downloadBtn.className = "download button";
+    downloadBtn.id = "download";
+    downloadBtn.textContent = "Download Results";
+
     const text = questionsCorrectAnswers.map((el: QCorrectAns, index: number) => {
         let i: number = index;
-        return `- ${el.question}<br>Correct answer: ${el.correct_answer}<br>Your answer: ${answered[i]}<br><br>`;
+        return `- ${el.question}<br/>Correct answer: ${el.correct_answer}<br/>Your answer: ${answered[i]}<br/><br/>`;
 
     });
 
-    const p = document.createElement("p");
-    p.className = "result";
-    p.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length} questions!<br><br>${text.join('')}`;
+    const resultsSummary = document.createElement("p");
+    resultsSummary.className = "result";
+    resultsSummary.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length} questions!<br/><br/>${text.join('')}`;
 
 
     results?.appendChild(newGameBtn);
-    results?.appendChild(p);
+    results?.appendChild(downloadBtn);
+    results?.appendChild(resultsSummary);
+
+    //download results feedback
+    downloadZipFile(downloadBtn, questionsCorrectAnswers, answered);
 
     // reset game
     resetQuiz(newGameBtn);
+}
+
+// function for download of the result in txt file
+function downloadZipFile(downloadBtn: Button, questionsCorrectAnswers: QCorrectAns[], answered: string[]) {
+    const worker = new Worker(new URL('./worker.ts', import.meta.url));
+
+    downloadBtn?.addEventListener("click", () => {
+        worker.onmessage = (e) => {
+            const blob = e.data;
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "QuizResult.zip";
+            link.click();
+        };
+
+        worker.postMessage({ questionsCorrectAnswers, answered });
+    });
 }
 
 // function for reseting the game
