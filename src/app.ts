@@ -1,5 +1,5 @@
-import { getFunction } from "./universalModule";
-import { encryptData, decryptQuestions, decryptAnswers } from "./dataEncryption";
+import { getFunction } from "./utils/universalModule";
+import { encryptData, decryptQuestions, decryptAnswers } from "./utils/dataEncryption";
 
 type Input = HTMLInputElement | undefined;
 type Options = HTMLOptionElement | undefined;
@@ -271,7 +271,7 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
 
 // function for download of the result in txt file
 function downloadZipFile(downloadBtn: Button, resultsSummary: HTMLParagraphElement | undefined) {
-    const worker = new Worker(new URL('./worker.ts', import.meta.url));
+    const worker = new Worker(new URL('/src/utils/worker.ts', import.meta.url));
 
     downloadBtn?.addEventListener("click", () => {
         worker.onmessage = (e) => {
