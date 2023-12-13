@@ -232,6 +232,9 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
         results.style.display = '';
     }
 
+    const div = document.createElement("div");
+    div.className = "result-buttons";
+
     const newGameBtn = document.createElement("button");
     newGameBtn.className = "new-game button";
     newGameBtn.id = "new-game";
@@ -253,19 +256,21 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
     resultsSummary.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length} questions!<br/><br/>${text.join('')}`;
 
 
-    results?.appendChild(newGameBtn);
-    results?.appendChild(downloadBtn);
+    div?.appendChild(newGameBtn);
+    div?.appendChild(downloadBtn);
+    results?.appendChild(div);
     results?.appendChild(resultsSummary);
 
+
     //download results feedback
-    downloadZipFile(downloadBtn, questionsCorrectAnswers, answered);
+    downloadZipFile(downloadBtn, resultsSummary);
 
     // reset game
     resetQuiz(newGameBtn);
 }
 
 // function for download of the result in txt file
-function downloadZipFile(downloadBtn: Button, questionsCorrectAnswers: QCorrectAns[], answered: string[]) {
+function downloadZipFile(downloadBtn: Button, resultsSummary: HTMLParagraphElement | undefined) {
     const worker = new Worker(new URL('./worker.ts', import.meta.url));
 
     downloadBtn?.addEventListener("click", () => {
@@ -277,7 +282,9 @@ function downloadZipFile(downloadBtn: Button, questionsCorrectAnswers: QCorrectA
             link.click();
         };
 
-        worker.postMessage({ questionsCorrectAnswers, answered });
+        let feedback = resultsSummary?.innerText.toString();
+
+        worker.postMessage({ feedback });
     });
 }
 
