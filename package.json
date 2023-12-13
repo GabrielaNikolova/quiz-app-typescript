@@ -10,6 +10,7 @@
   "keywords": [],
   "author": "Gabriela Nikolova",
   "dependencies": {
+    "@zip.js/zip.js": "^2.7.32",
     "crypto-js": "^4.2.0"
   },
   "devDependencies": {
