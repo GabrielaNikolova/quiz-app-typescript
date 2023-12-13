@@ -2,10 +2,10 @@
   "name": "quiz-app-typescript",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/bundle.js",
+  "main": "bundle.js",
   "scripts": {
-    "start": "dist/bundle.js",
-    "build": "webpack"
+    "start": "webpack-dev-server",
+    "build": "webpack --config webpack.config.prod.js"
   },
   "keywords": [],
   "author": "Gabriela Nikolova",
@@ -15,6 +15,7 @@
   "devDependencies": {
     "@types/crypto-js": "^4.2.1",
     "@types/node": "^20.10.4",
+    "clean-webpack-plugin": "^4.0.0",
     "ts-loader": "^9.5.1",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
