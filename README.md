@@ -8,13 +8,13 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="./src/public/screenshots/create-quiz-section.png" alt="project-screenshot" width="100%">
+<img src="src/public/screenshots/create-quiz-section.png" alt="project-screenshot" width="100%">
 
-<img src="./src/public/screenshots/start-quiz-section.png" alt="project-screenshot" width="100%">
+<img src="src/public/screenshots/start-quiz-section.png" alt="project-screenshot" width="100%">
 
-<img src="./src/public/screenshots/questions-section.png" alt="project-screenshot" width="100%">
+<img src="src/public/screenshots/questions-section.png" alt="project-screenshot" width="100%">
 
-<img src="./src/public/screenshots/results-section.png" alt="project-screenshot" width="100%">
+<img src="src/public/screenshots/results-section.png" alt="project-screenshot" width="100%">
 
   
   
