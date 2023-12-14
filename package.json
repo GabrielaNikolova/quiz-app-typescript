@@ -4,7 +4,6 @@
   "description": "",
   "main": "bundle.js",
   "scripts": {
-    "start": "webpack-dev-server",
     "build": "webpack --config webpack.config.prod.js"
   },
   "keywords": [],
