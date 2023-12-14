@@ -33,7 +33,7 @@ async function getCategories() {
         if ('trivia_categories' in categories) {
             categories as Categories;
 
-            categories.trivia_categories.map((c: Category) => {
+            categories.trivia_categories.forEach((c: Category) => {
                 let category = document.createElement("option");
                 category.setAttribute('value', c.id);
                 category.textContent = c.name;
@@ -132,7 +132,7 @@ function displayQuestion(allQuestions: Array<Question> | "") {
             answersList.innerHTML = ""; // Clear previous answers
         }
 
-        options.map((option) => {
+        options.forEach((option) => {
             const li = document.createElement("li");
             li.className = "radio-btn";
             const label = document.createElement("label");
@@ -201,7 +201,7 @@ function checkResult() {
 
     // get data from localStorage
     let questionsCorrectAnswers = decryptQuestions("questions-list");
-    questionsCorrectAnswers.map((q) => {
+    questionsCorrectAnswers.forEach((q) => {
         let question = {
             title: HTMLDecode(q.question),
             correctAnswer: HTMLDecode(q.correct_answer)
