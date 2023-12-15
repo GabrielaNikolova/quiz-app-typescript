@@ -22,21 +22,22 @@ const createHeadersFn = (method: string, data: object | '') => {
     }
 
     return headers;
-}
+};
 
+// should have a catch, I dont like await
 // Function to perform a fetch request using the specified endpoint and headers
-const fetchFn = (endpoint: Endpoint, headers: Headers) => {
+const fetchFn = <T>(endpoint: Endpoint, headers: Headers) => {
     return fetch(url(endpoint), headers)
         .then(response => response.json())
-        .then((data: Data | Categories) => data);
-        // .catch((error: string) => console.error('Error fetching data:', error));
-}
+        .then((data: T) => data);
+    // .catch((error: string) => console.error('Error fetching data:', error));
+};
 
 // Function for making a GET request
-export const getFunction = (endpoint: Endpoint) => {
+export const getFunction = <T>(endpoint: Endpoint) => {
     const headers = createHeadersFn('GET', '');
-    return fetchFn(endpoint, headers);
-}
+    return fetchFn<T>(endpoint, headers);
+};
 
 // // Function for making a POST request
 // export const postFunction = (endpoint: Endpoint, body: object) => {

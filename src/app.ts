@@ -26,15 +26,11 @@ let correct: string = "";
 //function to fetch all categories from the API
 async function getCategories() {
     try {
-        const endpoint = "api_category.php"
-
-        let categories = await getFunction(endpoint);
+        const categories = await getFunction<Categories>("api_category.php");
 
         if ('trivia_categories' in categories) {
-            categories as Categories;
-
             categories.trivia_categories.forEach((c: Category) => {
-                let category = document.createElement("option");
+                const category = document.createElement("option");
                 category.setAttribute('value', c.id);
                 category.textContent = c.name;
                 categoriesList?.appendChild(category);
@@ -51,21 +47,13 @@ getCategories();
 // function for creating the endpoint according to user input
 function createEndpoint() {
 
-    let amount = (document.getElementById("amount") as Input)?.value;
+    // What happens if the elements are not found?
+    const amount = (document.getElementById("amount") as Input)?.value;
     let category = categoriesList?.value;
     let difficulty = (document.getElementById("difficulty") as Options)?.value;
 
-    if (category === "any") {
-        category = "";
-    } else {
-        category = `&category=${category}`;
-    }
-
-    if (difficulty === "any") {
-        difficulty = "";
-    } else {
-        difficulty = `&difficulty=${difficulty}`;
-    }
+    category = category === "any" ? "" : `&category=${category}`;
+    difficulty = difficulty === "any" ? "" : `&difficulty=${difficulty}`;
 
     return `api.php?amount=${amount}${category}${difficulty}&type=multiple`;
 }
@@ -77,13 +65,12 @@ function generateQuiz() {
     quizFilterForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        let endpoint = createEndpoint();
+        const endpoint = createEndpoint();
 
         // function for fetching the data
         try {
-            const questions = await getFunction(endpoint);
-            if ('results' in questions) {
-                questions as Data;
+            const questions = await getFunction<Data>(endpoint);
+            if (questions.results) {
                 allQuestions = questions.results;
 
                 // set item to local storage
@@ -151,18 +138,16 @@ function checkIfSelected(variable: Array<Question> | "", func1: (variable: Array
 
     if (checked) {
         //Test if something was checked
-        const alert = document.getElementById("alert");
-        if (alert) {
-            alert.remove();
-        }
+        document.getElementById("alert")?.remove();
 
         //save answers to localStorage
         if (checked?.parentNode?.textContent) {
             selectedAnswers.push(checked.parentNode.textContent.trim());
         }
 
-        encryptData("answers", selectedAnswers)
+        encryptData("answers", selectedAnswers);
 
+        // Bad name
         func1(variable);
 
     } else {
@@ -200,20 +185,21 @@ function checkResult() {
     let rightAns = 0;
 
     // get data from localStorage
+    // Use Generic Type <T>
     let questionsCorrectAnswers = decryptQuestions("questions-list");
     questionsCorrectAnswers.forEach((q) => {
-        let question = {
+        return {
             title: HTMLDecode(q.question),
             correctAnswer: HTMLDecode(q.correct_answer)
-        }
-        return question;
+        };
     });
-    let answered = decryptAnswers("answers");
+
+    const answered = decryptAnswers("answers");
 
     // compare data
     questionsCorrectAnswers as QCorrectAns[];
     questionsCorrectAnswers.forEach((a: QCorrectAns) => {
-        if (answered.includes(a.correct_answer)) {
+        if (answered.indexOf(a.correct_answer) > -1) {
             rightAns++;
         }
     });
