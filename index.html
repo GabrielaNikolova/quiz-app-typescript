@@ -14,8 +14,11 @@
             </header>
             <main class="page-container">
                 <section class="quiz-filter-container">
+                    <p class="quiz-guide-text">
+                        Select Category, Difficulty and Amount of questions, and hit the Start Quiz button to continue!
+                    </p>
                     <form class="quiz-filter" id="filter" action="" method="get">
-                        <label class="label" for="category">Select category:</label>
+                        <label class="label" for="category">Category:</label>
                         <select class="select" id="category">
                             <option value="any" id="any" selected>Any category</option>
                         </select>
@@ -28,9 +31,15 @@
                         </select>
                         <label class="label" for="amount">Number of Questions:</label>
                         <input class="select" type="number" name="amount" id="amount" min="5" max="50" value="10" />
-                        <button class="button" id="get-questions" type="submit">Generate the Quiz</button>
+                        <button class="button" id="get-questions" type="submit">Start Quiz</button>
                     </form>
                 </section>
+                <div class="quiz-info" style="display: none">
+                    <div class="current-category"></div>
+                    <div class="current-difficulty"></div>
+                    <div class="curent-question"></div>
+                    <button class="button" id="skip-quiz" type="submit">Skip Quiz</button>
+                </div>
                 <section class="questions-container" id="q-container" style="display: none">
                     <h2 class="question" id="question"></h2>
                     <ul class="answer-list" id="answers-list"></ul>
@@ -40,7 +49,7 @@
                     </div>
                 </section>
                 <section class="results" id="results" style="display: none"></section>
-                <button class="button" type="button" id="start-quiz" style="display: none">Start the Quiz!</button>
+                <!-- <button class="button" type="button" id="start-quiz" style="display: none">Start the Quiz!</button> -->
             </main>
         </div>
         <script src="dist/bundle.js" type="module"></script>
