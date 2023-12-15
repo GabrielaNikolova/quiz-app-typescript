@@ -13,9 +13,9 @@
                 <h1>Quiz Game App</h1>
             </header>
             <main class="page-container">
-                <section class="quiz-filter-container">
+                <section class="quiz-filter-container" id="filter-container">
                     <p class="quiz-guide-text">
-                        Select Category, Difficulty and Amount of questions, and hit the Start Quiz button to continue!
+                        Select Category, Difficulty, Amount of questions and hit the Start Quiz button to continue!
                     </p>
                     <form class="quiz-filter" id="filter" action="" method="get">
                         <label class="label" for="category">Category:</label>
@@ -31,7 +31,7 @@
                         </select>
                         <label class="label" for="amount">Number of Questions:</label>
                         <input class="select" type="number" name="amount" id="amount" min="5" max="50" value="10" />
-                        <button class="button" id="get-questions" type="submit">Start Quiz</button>
+                        <button class="button" id="get-questions" type="submit">Start Quiz!</button>
                     </form>
                 </section>
                 <div class="quiz-info" style="display: none">

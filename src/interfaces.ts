@@ -1,6 +1,5 @@
 interface Headers {
-    method: string,
-    body: string
+    method: string
 }
 
 interface Question {

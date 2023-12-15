@@ -1,25 +1,20 @@
 import { getFunction } from './utils/universalModule';
 import { encryptData, decryptQuestions, decryptAnswers } from './utils/dataEncryption';
 
-type Input = HTMLInputElement | undefined;
-type Options = HTMLOptionElement | undefined;
-type Element = HTMLHtmlElement | undefined;
-type Button = HTMLButtonElement | undefined;
-type Form = HTMLFormElement | undefined;
-
-const categoriesList = document.getElementById('category') as HTMLSelectElement | undefined;
+const categoriesList = document.getElementById('category') as Select;
+const quizFilterContainer = document.getElementById('filter-container') as HtmlElement;
 const quizFilterForm = document.getElementById('filter') as Form;
-const startQuiz = document.getElementById('start-quiz') as Button;
-const questionContainer = document.getElementById('q-container') as Element;
-const questionTitle = document.getElementById('question') as HTMLHeadingElement | undefined;
-const answersList = document.getElementById('answers-list') as HTMLUListElement | undefined;
+// const startQuiz = document.getElementById('start-quiz') as Button;
+const questionContainer = document.getElementById('q-container') as HtmlElement;
+const questionTitle = document.getElementById('question') as Heading;
+const answersList = document.getElementById('answers-list') as UnorderedList;
 const nextQ = document.getElementById('nextq') as Button;
 const checkRes = document.getElementById('check') as Button;
-const results = document.getElementById('results') as Element;
+const results = document.getElementById('results') as HtmlElement;
 
 let i: number = 0;
-let allQuestions: Array<Question>;
-let selectedAnswers: Array<string> = [];
+let allQuestions: Question[];
+let selectedAnswers: string[] = [];
 let correct: string = '';
 
 //function to fetch all categories from the API
@@ -27,13 +22,13 @@ async function getCategories() {
     try {
         const endpoint = 'api_category.php';
 
-        let categories = await getFunction(endpoint);
+        const categories = await getFunction(endpoint);
 
         if ('trivia_categories' in categories) {
             categories as Categories;
 
             categories.trivia_categories.forEach((c: Category) => {
-                let category = document.createElement('option');
+                const category = document.createElement('option');
                 category.setAttribute('value', c.id);
                 category.textContent = c.name;
                 categoriesList?.appendChild(category);
@@ -47,21 +42,13 @@ getCategories();
 
 // function for creating the endpoint according to user input
 function createEndpoint() {
-    let amount = (document.getElementById('amount') as Input)?.value;
+    const amount = (document.getElementById('amount') as Input)?.value;
     let category = categoriesList?.value;
     let difficulty = (document.getElementById('difficulty') as Options)?.value;
 
-    if (category === 'any') {
-        category = '';
-    } else {
-        category = `&category=${category}`;
-    }
+    category === 'any' ? (category = '') : (category = `&category=${category}`);
 
-    if (difficulty === 'any') {
-        difficulty = '';
-    } else {
-        difficulty = `&difficulty=${difficulty}`;
-    }
+    difficulty === 'any' ? (difficulty = '') : (difficulty = `&difficulty=${difficulty}`);
 
     return `api.php?amount=${amount}${category}${difficulty}&type=multiple`;
 }
@@ -71,7 +58,7 @@ function generateQuiz() {
     quizFilterForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        let endpoint = createEndpoint();
+        const endpoint = createEndpoint();
 
         // function for fetching the data
         try {
@@ -82,31 +69,25 @@ function generateQuiz() {
 
                 // set item to local storage
                 encryptData('questions-list', allQuestions);
-                // localStorage.setItem("questions-list", JSON.stringify(allQuestions));
-            }
-
-            if (startQuiz) {
-                startQuiz.style.display = '';
             }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+        startQuiz();
     });
 }
 
-// function for starting the quiz
-startQuiz?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (quizFilterForm && nextQ) {
+function startQuiz() {
+    if (quizFilterContainer && quizFilterForm && nextQ) {
+        quizFilterContainer.style.display = 'none';
         quizFilterForm.style.display = 'none';
         nextQ.style.display = '';
     }
-    startQuiz.style.display = 'none';
 
     displayQuestion(allQuestions);
 
     i++;
-});
+}
 
 // function for displaying the questions one by one
 function displayQuestion(allQuestions: Array<Question> | '') {
@@ -118,8 +99,8 @@ function displayQuestion(allQuestions: Array<Question> | '') {
         }
 
         correct = allQuestions[i].correct_answer;
-        let incorrectAnswers = allQuestions[i].incorrect_answers;
-        let options = incorrectAnswers;
+        const incorrectAnswers = allQuestions[i].incorrect_answers;
+        const options = incorrectAnswers;
         options.splice(Math.floor(Math.random() * (incorrectAnswers.length + 1)), 0, correct);
 
         if (answersList) {
@@ -139,24 +120,20 @@ function displayQuestion(allQuestions: Array<Question> | '') {
 }
 
 //function for checking if there is a selected answer
-function checkIfSelected(variable: Array<Question> | '', func1: (variable: Array<Question> | '') => void) {
-    let checked = document.querySelector('input[name = "answer"]:checked') as Input;
+function checkIfSelected(variable: Question[] | '', displayOrCheckFnc: (variable: Question[] | '') => void) {
+    const checkedOption = document.querySelector('input[name = "answer"]:checked') as Input;
 
-    if (checked) {
-        //Test if something was checked
-        const alert = document.getElementById('alert');
-        if (alert) {
-            alert.remove();
-        }
+    if (checkedOption) {
+        document.getElementById('alert')?.remove();
 
         //save answers to localStorage
-        if (checked?.parentNode?.textContent) {
-            selectedAnswers.push(checked.parentNode.textContent.trim());
+        if (checkedOption?.parentNode?.textContent) {
+            selectedAnswers.push(checkedOption.parentNode.textContent.trim());
         }
 
         encryptData('answers', selectedAnswers);
 
-        func1(variable);
+        displayOrCheckFnc(variable);
     } else {
         const p = document.createElement('p');
         p.id = 'alert';
@@ -192,17 +169,16 @@ function checkResult() {
     let rightAns = 0;
 
     // get data from localStorage
-    let questionsCorrectAnswers = decryptQuestions('questions-list');
+    const questionsCorrectAnswers = decryptQuestions('questions-list');
     questionsCorrectAnswers.forEach((q) => {
-        let question = {
+        const question = {
             title: HTMLDecode(q.question),
             correctAnswer: HTMLDecode(q.correct_answer),
         };
         return question;
     });
-    let answered = decryptAnswers('answers');
+    const answered = decryptAnswers('answers');
 
-    // compare data
     questionsCorrectAnswers as QCorrectAns[];
     questionsCorrectAnswers.forEach((a: QCorrectAns) => {
         if (answered.includes(a.correct_answer)) {
@@ -210,7 +186,6 @@ function checkResult() {
         }
     });
 
-    // display results
     displayResults(rightAns, questionsCorrectAnswers, answered);
 }
 
@@ -237,7 +212,7 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
     downloadBtn.textContent = 'Download Results';
 
     const text = questionsCorrectAnswers.map((el: QCorrectAns, index: number) => {
-        let i: number = index;
+        const i: number = index;
         return `- ${el.question}<br/>Correct answer: ${el.correct_answer}<br/>Your answer: ${answered[i]}<br/><br/>`;
     });
 
@@ -254,7 +229,6 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
     //download results feedback
     downloadZipFile(downloadBtn, resultsSummary);
 
-    // reset game
     resetQuiz(newGameBtn);
 }
 
@@ -271,7 +245,7 @@ function downloadZipFile(downloadBtn: Button, resultsSummary: HTMLParagraphEleme
             link.click();
         };
 
-        let feedback = resultsSummary?.innerText.toString();
+        const feedback = resultsSummary?.innerText.toString();
 
         worker.postMessage({ feedback });
     });
@@ -283,25 +257,31 @@ function resetQuiz(newGameBtn: Button) {
         i = 0;
         selectedAnswers = [];
 
-        if (quizFilterForm && questionTitle && answersList && questionContainer && checkRes && results) {
+        if (
+            quizFilterContainer &&
+            quizFilterForm &&
+            questionTitle &&
+            answersList &&
+            questionContainer &&
+            checkRes &&
+            results
+        ) {
+            quizFilterContainer.style.display = '';
             quizFilterForm.style.display = '';
             questionTitle.textContent = '';
             answersList.innerHTML = '';
-            questionContainer.style.display = '';
             checkRes.style.display = 'none';
             results.innerHTML = '';
+            results.style.display = 'none';
             localStorage.removeItem('answers');
             localStorage.removeItem('questions-list');
-
-            questionContainer.style.display = 'none';
-            results.style.display = 'none';
         }
     });
 }
 
-// to convert html text into normal text
+// function to convert html text into normal text
 function HTMLDecode(textString: string) {
-    let doc = new DOMParser().parseFromString(textString, 'text/html');
+    const doc = new DOMParser().parseFromString(textString, 'text/html');
     return doc.documentElement.textContent;
 }
 
