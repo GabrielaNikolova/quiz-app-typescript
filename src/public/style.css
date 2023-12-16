@@ -64,13 +64,13 @@ p {
     font-family: 'Patrick Hand SC';
     font-size: var(--font-size-md);
     text-align: center;
-    border-style: none;
+    border: solid;
+    border-color: transparent;
     cursor: pointer;
 }
 
 .button:hover {
-    background-color: rgb(251, 133, 0, 0.9);
-    color: var(--dark-blue);
+    border-color: var(--dark-blue);
     transition: 0.3s ease-in-out;
 }
 
@@ -84,6 +84,15 @@ p {
     padding: 5rem;
 }
 
+.page-header h1 {
+    display: flex;
+    justify-content: center;
+    justify-self: center;
+    font-size: var(--font-size-xxl);
+    align-items: center;
+    margin: 0;
+}
+
 .page-container {
     display: grid;
     grid-area: 2/1/-1/-1;
@@ -91,19 +100,12 @@ p {
     align-self: center;
 }
 
-.page-header h1 {
-    display: flex;
-    justify-content: center;
-    font-size: var(--font-size-xxl);
-    align-items: center;
-    margin: 0;
-}
-
 .quiz-filter-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    justify-self: center;
 }
 
 .quiz-filter {
@@ -133,6 +135,27 @@ p {
 
 #category {
     max-width: 50%;
+}
+
+.quiz-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    justify-self: center;
+    padding: 0 2rem 0 2rem;
+    margin-bottom: 1rem;
+    max-width: 80%;
+    border: solid var(--blue);
+    /* background-color: rgb(33, 158, 188, 0.5); */
+    border-radius: 2rem;
+}
+
+#skip-quiz {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: var(--font-size-base);
 }
 
 .questions-container {
