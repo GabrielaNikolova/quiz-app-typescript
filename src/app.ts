@@ -35,7 +35,6 @@ async function getCategories() {
             category.textContent = c.name;
             categoriesList?.appendChild(category);
         });
-
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -117,7 +116,7 @@ function displayQuestion(allQuestions: Array<Question> | '') {
         options.splice(Math.floor(Math.random() * (incorrectAnswers.length + 1)), 0, correct);
 
         if (answersList) {
-            answersList.innerHTML = ''; // Clear previous answers
+            answersList.innerHTML = '';
         }
 
         options.forEach((option) => {
