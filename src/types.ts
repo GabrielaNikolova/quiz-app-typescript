@@ -8,3 +8,4 @@ type Form = HTMLFormElement | undefined;
 type Heading = HTMLHeadingElement | undefined;
 type UnorderedList = HTMLUListElement | undefined;
 type Select = HTMLSelectElement | undefined;
+type Category = { id: string; name: string };
