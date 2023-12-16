@@ -4,11 +4,16 @@ import { encryptData, decryptQuestions, decryptAnswers } from './utils/dataEncry
 const categoriesList = document.getElementById('category') as Select;
 const quizFilterContainer = document.getElementById('filter-container') as HtmlElement;
 const quizFilterForm = document.getElementById('filter') as Form;
-// const startQuiz = document.getElementById('start-quiz') as Button;
+const quizInfo = document.getElementById('quiz-info') as DivElement;
+const currentCategory = document.getElementById('current-category') as Paragraph;
+const currentDifficulty = document.getElementById('current-difficulty') as Paragraph;
+const currentQuestion = document.getElementById('current-question') as Paragraph;
+const skipQuiz = document.getElementById('skip-quiz') as Button;
 const questionContainer = document.getElementById('q-container') as HtmlElement;
 const questionTitle = document.getElementById('question') as Heading;
 const answersList = document.getElementById('answers-list') as UnorderedList;
 const nextQ = document.getElementById('nextq') as Button;
+const newGameBtn = document.getElementById('new-game') as Button;
 const checkRes = document.getElementById('check') as Button;
 const results = document.getElementById('results') as HtmlElement;
 
@@ -89,12 +94,26 @@ function startQuiz() {
     i++;
 }
 
+function showQuizInfo() {
+    const quizData = decryptQuestions('questions-list');
+    if (currentCategory && currentDifficulty && currentQuestion) {
+        currentCategory.textContent = `${quizData[i].category}`;
+        currentDifficulty.textContent = `${quizData[i].difficulty}`;
+        let currentQNumber = i + 1;
+        currentQuestion.textContent = `${currentQNumber} / ${quizData.length}`;
+    }
+}
+
+skipQuiz?.addEventListener('click', resetQuiz);
+
 // function for displaying the questions one by one
 function displayQuestion(allQuestions: Array<Question> | '') {
     if (Array.isArray(allQuestions)) {
-        if (questionContainer && nextQ && questionTitle) {
+        if (quizInfo && questionContainer && nextQ && questionTitle) {
+            quizInfo.style.display = '';
             questionContainer.style.display = '';
             nextQ.className = 'button nextq';
+            showQuizInfo();
             questionTitle.innerHTML = allQuestions[i].question;
         }
 
@@ -191,8 +210,9 @@ function checkResult() {
 
 // display results function
 function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[], answered: string[]) {
-    if (questionContainer) {
+    if (quizInfo && questionContainer) {
         questionContainer.style.display = 'none';
+        quizInfo.style.display = 'none';
     }
     if (results) {
         results.style.display = '';
@@ -201,10 +221,10 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
     const div = document.createElement('div');
     div.className = 'result-buttons';
 
-    const newGameBtn = document.createElement('button');
-    newGameBtn.className = 'new-game button';
-    newGameBtn.id = 'new-game';
-    newGameBtn.textContent = 'New Game!';
+    // const newGameBtn = document.createElement('button');
+    // newGameBtn.className = 'new-game button';
+    // newGameBtn.id = 'new-game';
+    // newGameBtn.textContent = 'New Game!';
 
     const downloadBtn = document.createElement('button');
     downloadBtn.className = 'download button';
@@ -221,15 +241,13 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
     resultsSummary.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length
         } questions!<br/><br/>${text.join('')}`;
 
-    div?.appendChild(newGameBtn);
+    // div?.appendChild(newGameBtn);
     div?.appendChild(downloadBtn);
     results?.appendChild(div);
     results?.appendChild(resultsSummary);
 
     //download results feedback
     downloadZipFile(downloadBtn, resultsSummary);
-
-    resetQuiz(newGameBtn);
 }
 
 // function for download of the result in txt file
@@ -252,31 +270,34 @@ function downloadZipFile(downloadBtn: Button, resultsSummary: HTMLParagraphEleme
 }
 
 // function for reseting the game
-function resetQuiz(newGameBtn: Button) {
-    newGameBtn?.addEventListener('click', () => {
-        i = 0;
-        selectedAnswers = [];
+newGameBtn?.addEventListener('click', resetQuiz);
+function resetQuiz(e: Event) {
+    e.preventDefault();
+    i = 0;
+    selectedAnswers = [];
 
-        if (
-            quizFilterContainer &&
-            quizFilterForm &&
-            questionTitle &&
-            answersList &&
-            questionContainer &&
-            checkRes &&
-            results
-        ) {
-            quizFilterContainer.style.display = '';
-            quizFilterForm.style.display = '';
-            questionTitle.textContent = '';
-            answersList.innerHTML = '';
-            checkRes.style.display = 'none';
-            results.innerHTML = '';
-            results.style.display = 'none';
-            localStorage.removeItem('answers');
-            localStorage.removeItem('questions-list');
-        }
-    });
+    if (
+        quizFilterContainer &&
+        quizFilterForm &&
+        quizInfo &&
+        // questionTitle &&
+        answersList &&
+        questionContainer &&
+        checkRes &&
+        results
+    ) {
+        quizFilterContainer.style.display = '';
+        quizFilterForm.style.display = '';
+        quizInfo.style.display = 'none';
+        questionContainer.style.display = 'none';
+        // questionTitle.textContent = '';
+        answersList.innerHTML = '';
+        checkRes.style.display = 'none';
+        results.innerHTML = '';
+        results.style.display = 'none';
+        localStorage.removeItem('answers');
+        localStorage.removeItem('questions-list');
+    }
 }
 
 // function to convert html text into normal text

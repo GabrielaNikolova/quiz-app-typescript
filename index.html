@@ -34,11 +34,11 @@
                         <button class="button" id="get-questions" type="submit">Start Quiz!</button>
                     </form>
                 </section>
-                <div class="quiz-info" style="display: none">
-                    <div class="current-category"></div>
-                    <div class="current-difficulty"></div>
-                    <div class="curent-question"></div>
-                    <button class="button" id="skip-quiz" type="submit">Skip Quiz</button>
+                <div class="quiz-info" id="quiz-info" style="display: none">
+                    <p class="current-category" id="current-category"></p>
+                    <p class="current-difficulty" id="current-difficulty"></p>
+                    <p class="current-question" id="current-question"></p>
+                    <button class="button" id="skip-quiz" type="button">Skip Quiz</button>
                 </div>
                 <section class="questions-container" id="q-container" style="display: none">
                     <h2 class="question" id="question"></h2>
@@ -48,8 +48,9 @@
                         <button class="button" type="button" id="check" style="display: none">Check Result</button>
                     </div>
                 </section>
-                <section class="results" id="results" style="display: none"></section>
-                <!-- <button class="button" type="button" id="start-quiz" style="display: none">Start the Quiz!</button> -->
+                <section class="results" id="results" style="display: none">
+                    <button class="new-game button" type="button" id="new-game">New Game!</button>
+                </section>
             </main>
         </div>
         <script src="dist/bundle.js" type="module"></script>

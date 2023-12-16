@@ -8,13 +8,13 @@ export function encryptData(name: string, data: Question[] | string[]) {
     localStorage.setItem(name, encrypted);
 }
 
-export function decryptQuestions(name: string): QCorrectAns[] {
+export function decryptQuestions(name: string): Question[] {
     const encrypted = localStorage.getItem(name);
     if (typeof encrypted != 'string') {
         throw Error('Data type is null.')
     }
     const data = CryptoJS.AES.decrypt(encrypted, SECRET_KEY).toString(CryptoJS.enc.Utf8);
-    const decrypted: QCorrectAns[] = JSON.parse(data);
+    const decrypted: Question[] = JSON.parse(data);
     return decrypted;
 }
 

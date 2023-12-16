@@ -1,3 +1,5 @@
+type DivElement = HTMLDivElement | undefined;
+type Paragraph = HTMLParagraphElement | undefined;
 type Input = HTMLInputElement | undefined;
 type Options = HTMLOptionElement | undefined;
 type HtmlElement = HTMLHtmlElement | undefined;
