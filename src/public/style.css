@@ -80,7 +80,6 @@ p {
     position: relative;
     align-self: center;
     max-width: 100%;
-    max-height: 100%;
     padding: 5rem;
 }
 
@@ -106,16 +105,25 @@ p {
     justify-content: center;
     align-items: center;
     justify-self: center;
+    max-width: 100%;
+    padding: 0 2rem 0 2rem;
+}
+
+.quiz-guide-text {
+    display: flex;
+    text-align: center;
+    max-width: 100%;
 }
 
 .quiz-filter {
     display: flex;
+    flex-wrap: wrap;
     margin-top: 1rem;
     padding: 2rem;
-    max-width: 100%;
     justify-self: center;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    max-width: 100%;
     background-color: rgb(33, 158, 188, 0.5);
     border-radius: var(--border-radius);
 }
@@ -126,7 +134,6 @@ p {
     font-family: 'Patrick Hand SC';
     font-size: var(--font-size-base);
     text-align: center;
-    max-width: 100%;
     border-style: none;
     padding: 0.2rem;
     margin: 2rem;
@@ -143,6 +150,7 @@ p {
     justify-content: space-between;
     align-items: center;
     justify-self: center;
+    text-align: center;
     padding: 0 2rem 0 2rem;
     margin-bottom: 1rem;
     max-width: 80%;
@@ -268,5 +276,83 @@ p {
         align-items: center;
         padding: 1rem;
         margin: 1rem;
+    }
+
+    .quiz-guide-text {
+        padding-bottom: 2rem;
+        align-self: center;
+    }
+
+    #skip-quiz {
+        position: absolute;
+        top: 60rem;
+        right: auto;
+        left: auto;
+    }
+}
+@media screen and (max-width: 450px) {
+    .page-header,
+    .page-container {
+        padding: 0;
+        padding-top: 2rem;
+        margin: 0;
+    }
+
+    .quiz-filter-container {
+        font-size: var(--font-size-base);
+        padding: 0;
+        padding-top: 1rem;
+    }
+
+    .quiz-filter,
+    .button {
+        font-size: var(--font-size-base);
+        margin: 0;
+    }
+
+    .results {
+        margin: 1rem;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .page-header,
+    .page-container {
+        padding-top: 2rem;
+        max-width: 100%;
+    }
+
+    .quiz-filter-container,
+    .quiz-filter,
+    .button,
+    .select {
+        font-size: var(--font-size-sm);
+    }
+
+    .quiz-filter {
+        padding: 0;
+    }
+
+    .results {
+        margin: 0;
+        padding: 0;
+    }
+    .button {
+        margin-bottom: 1rem;
+    }
+
+    .result-buttons {
+        display: flex;
+        flex-direction: column;
+        justify-self: center;
+        align-items: center;
+    }
+
+    #skip-quiz {
+        position: absolute;
+        align-self: center;
+        top: 60rem;
+        left: auto;
+        right: auto;
     }
 }
