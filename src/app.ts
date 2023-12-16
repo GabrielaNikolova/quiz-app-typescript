@@ -14,8 +14,10 @@ const questionTitle = document.getElementById('question') as Heading;
 const answersList = document.getElementById('answers-list') as UnorderedList;
 const nextQ = document.getElementById('nextq') as Button;
 const newGameBtn = document.getElementById('new-game') as Button;
+const downloadBtn = document.getElementById('download') as Button;
 const checkRes = document.getElementById('check') as Button;
 const results = document.getElementById('results') as HtmlElement;
+const resultsSummary = document.getElementById('results-text') as Paragraph;
 
 let i: number = 0;
 let allQuestions: Question[];
@@ -25,20 +27,15 @@ let correct: string = '';
 //function to fetch all categories from the API
 async function getCategories() {
     try {
-        const endpoint = 'api_category.php';
+        const categories = await getFunction<Categories>('api_category.php');
 
-        const categories = await getFunction(endpoint);
+        categories.trivia_categories.forEach((c: Category) => {
+            const category = document.createElement('option');
+            category.setAttribute('value', c.id);
+            category.textContent = c.name;
+            categoriesList?.appendChild(category);
+        });
 
-        if ('trivia_categories' in categories) {
-            categories as Categories;
-
-            categories.trivia_categories.forEach((c: Category) => {
-                const category = document.createElement('option');
-                category.setAttribute('value', c.id);
-                category.textContent = c.name;
-                categoriesList?.appendChild(category);
-            });
-        }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -67,14 +64,11 @@ function generateQuiz() {
 
         // function for fetching the data
         try {
-            const questions = await getFunction(endpoint);
-            if ('results' in questions) {
-                questions as Data;
-                allQuestions = questions.results;
+            const questions = await getFunction<Data>(endpoint);
+            allQuestions = questions.results;
 
-                // set item to local storage
-                encryptData('questions-list', allQuestions);
-            }
+            // set item to local storage
+            encryptData('questions-list', allQuestions);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -97,8 +91,8 @@ function startQuiz() {
 function showQuizInfo() {
     const quizData = decryptQuestions('questions-list');
     if (currentCategory && currentDifficulty && currentQuestion) {
-        currentCategory.textContent = `${quizData[i].category}`;
-        currentDifficulty.textContent = `${quizData[i].difficulty}`;
+        currentCategory.textContent = HTMLDecode(`Category: ${quizData[i].category}`);
+        currentDifficulty.textContent = `Difficulty: ${quizData[i].difficulty}`;
         let currentQNumber = i + 1;
         currentQuestion.textContent = `${currentQNumber} / ${quizData.length}`;
     }
@@ -190,17 +184,16 @@ function checkResult() {
     // get data from localStorage
     const questionsCorrectAnswers = decryptQuestions('questions-list');
     questionsCorrectAnswers.forEach((q) => {
-        const question = {
+        return {
             title: HTMLDecode(q.question),
             correctAnswer: HTMLDecode(q.correct_answer),
         };
-        return question;
     });
     const answered = decryptAnswers('answers');
 
     questionsCorrectAnswers as QCorrectAns[];
-    questionsCorrectAnswers.forEach((a: QCorrectAns) => {
-        if (answered.includes(a.correct_answer)) {
+    questionsCorrectAnswers.forEach((a: QCorrectAns, index: number) => {
+        if (answered[index] === a.correct_answer) {
             rightAns++;
         }
     });
@@ -214,37 +207,17 @@ function displayResults(rightAns: number, questionsCorrectAnswers: QCorrectAns[]
         questionContainer.style.display = 'none';
         quizInfo.style.display = 'none';
     }
-    if (results) {
+    if (results && resultsSummary) {
         results.style.display = '';
+
+        const resultsText = questionsCorrectAnswers.map((el: QCorrectAns, index: number) => {
+            const i: number = index;
+            return `- ${el.question}<br/>Correct answer: ${el.correct_answer}<br/>Your answer: ${answered[i]}<br/><br/>`;
+        });
+
+        resultsSummary.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length
+            } questions!<br/><br/>${resultsText.join('')}`;
     }
-
-    const div = document.createElement('div');
-    div.className = 'result-buttons';
-
-    // const newGameBtn = document.createElement('button');
-    // newGameBtn.className = 'new-game button';
-    // newGameBtn.id = 'new-game';
-    // newGameBtn.textContent = 'New Game!';
-
-    const downloadBtn = document.createElement('button');
-    downloadBtn.className = 'download button';
-    downloadBtn.id = 'download';
-    downloadBtn.textContent = 'Download Results';
-
-    const text = questionsCorrectAnswers.map((el: QCorrectAns, index: number) => {
-        const i: number = index;
-        return `- ${el.question}<br/>Correct answer: ${el.correct_answer}<br/>Your answer: ${answered[i]}<br/><br/>`;
-    });
-
-    const resultsSummary = document.createElement('p');
-    resultsSummary.className = 'result';
-    resultsSummary.innerHTML = `Your score is ${rightAns} correct answer/s out of ${answered.length
-        } questions!<br/><br/>${text.join('')}`;
-
-    // div?.appendChild(newGameBtn);
-    div?.appendChild(downloadBtn);
-    results?.appendChild(div);
-    results?.appendChild(resultsSummary);
 
     //download results feedback
     downloadZipFile(downloadBtn, resultsSummary);
@@ -280,20 +253,19 @@ function resetQuiz(e: Event) {
         quizFilterContainer &&
         quizFilterForm &&
         quizInfo &&
-        // questionTitle &&
         answersList &&
         questionContainer &&
         checkRes &&
+        resultsSummary &&
         results
     ) {
         quizFilterContainer.style.display = '';
         quizFilterForm.style.display = '';
         quizInfo.style.display = 'none';
         questionContainer.style.display = 'none';
-        // questionTitle.textContent = '';
         answersList.innerHTML = '';
         checkRes.style.display = 'none';
-        results.innerHTML = '';
+        resultsSummary.innerHTML = '';
         results.style.display = 'none';
         localStorage.removeItem('answers');
         localStorage.removeItem('questions-list');

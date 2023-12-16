@@ -11,13 +11,13 @@ const createHeadersFn = (method: string, data: object | '') => {
     return headers;
 };
 
-const fetchFn = (endpoint: Endpoint, headers: Headers) => {
+const fetchFn = <T>(endpoint: Endpoint, headers: Headers) => {
     return fetch(url(endpoint), headers)
         .then((response) => response.json())
-        .then((data: Data | Categories) => data);
+        .then((data: T) => data);
 };
 
-export const getFunction = (endpoint: Endpoint) => {
+export const getFunction = <T>(endpoint: Endpoint) => {
     const headers = createHeadersFn('GET', '');
-    return fetchFn(endpoint, headers);
+    return fetchFn<T>(endpoint, headers);
 };
