@@ -348,7 +348,11 @@ input[type='radio']:checked ~ .radio-btn-ans {
     }
 
     .quiz-filter {
-        padding: 0;
+        padding: 1rem;
+    }
+
+    .select {
+        margin: 1rem;
     }
 
     .answer:hover {
