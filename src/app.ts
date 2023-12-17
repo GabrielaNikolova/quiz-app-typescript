@@ -90,7 +90,7 @@ function showQuizInfo() {
     if (currentCategory && currentDifficulty && currentQuestion) {
         currentCategory.textContent = HTMLDecode(`Category: ${quizData[i].category}`);
         currentDifficulty.textContent = `Difficulty: ${quizData[i].difficulty}`;
-        let currentQNumber = i + 1;
+        const currentQNumber = i + 1;
         currentQuestion.textContent = `${currentQNumber} / ${quizData.length}`;
     }
 }
