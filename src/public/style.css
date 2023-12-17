@@ -111,7 +111,7 @@ p {
 .quiz-guide-text {
     display: flex;
     text-align: center;
-    max-width: 100%;
+    max-width: 80%;
 }
 
 .quiz-filter {
