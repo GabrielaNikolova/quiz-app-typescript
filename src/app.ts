@@ -20,27 +20,27 @@ const downloadBtn = document.getElementById('download') as Button;
 const results = document.getElementById('results') as HtmlElement;
 const resultsSummary = document.getElementById('results-text') as Paragraph;
 
-
 let i: number = -1;
 let allQuestions: Question[];
 let selectedAnswers: string[] = [];
 
-//function to fetch all categories from the API
-async function getCategories() {
-    try {
-        const categories = await getFunction<Categories>('api_category.php');
+const shuffleArray = (array: string[]) => {
+    return array.sort(() => Math.random() - 0.5);
+};
 
-        categories.trivia_categories.forEach((c: Category) => {
-            const category = document.createElement('option');
-            category.setAttribute('value', c.id);
-            category.textContent = c.name;
-            categoriesList?.appendChild(category);
-        });
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
+document.addEventListener('DOMContentLoaded', function () {
+    getCategories();
+    eventListeners();
+});
+
+function eventListeners() {
+    quizFilterForm?.addEventListener('submit', generateQuiz);
+    prevQ?.addEventListener('click', previousQuestion);
+    nextQ?.addEventListener('click', nextQuestion);
+    checkRes?.addEventListener('click', endQuiz);
+    skipQuiz?.addEventListener('click', resetQuiz);
+    newGameBtn?.addEventListener('click', resetQuiz);
 }
-getCategories();
 
 // function for creating the URL endpoint according to user input
 function createEndpoint() {
@@ -55,22 +55,20 @@ function createEndpoint() {
     return `api.php?amount=${amount}${category}${difficulty}&type=multiple`;
 }
 
-function generateQuiz() {
-    quizFilterForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
+async function generateQuiz(e: Event) {
+    e.preventDefault();
 
-        const endpoint = createEndpoint();
-        try {
-            const questions = await getFunction<Data>(endpoint);
-            allQuestions = questions.results;
+    const endpoint = createEndpoint();
+    try {
+        const questions = await getFunction<Data>(endpoint);
+        allQuestions = questions.results;
 
-            // set item to local storage
-            encryptData('questions-list', allQuestions);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-        startQuiz();
-    });
+        // set item to local storage
+        encryptData('questions-list', allQuestions);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+    startQuiz();
 }
 
 function startQuiz() {
@@ -177,8 +175,7 @@ function checkIfSelected(variable: Question[] | '', displayOrCheckFnc: (variable
     }
 }
 
-// function for changing to the prev question
-prevQ?.addEventListener('click', (e) => {
+function previousQuestion(e: Event) {
     e.preventDefault();
 
     i -= 2;
@@ -192,10 +189,9 @@ prevQ?.addEventListener('click', (e) => {
             nextQ.style.display = '';
         }
     }
-});
+}
 
-// function for changing the question
-nextQ?.addEventListener('click', (e) => {
+function nextQuestion(e: Event) {
     e.preventDefault();
 
     checkIfSelected(allQuestions, displayQuestion);
@@ -206,13 +202,13 @@ nextQ?.addEventListener('click', (e) => {
             nextQ.style.display = 'none';
         }
     }
-});
+}
 
-checkRes?.addEventListener('click', (e) => {
+function endQuiz(e: Event) {
     e.preventDefault();
 
     checkIfSelected('', checkResult);
-});
+}
 
 function checkResult() {
     let correctAnsCount = 0;
@@ -255,9 +251,8 @@ function displayResults(correctAnsCount: number, questionsCorrectAnswers: QCorre
 
 // function for download of the result in txt file
 function downloadZipFile(downloadBtn: Button, resultsSummary: Paragraph | undefined) {
-    const worker = new Worker(new URL('/src/utils/worker.ts', import.meta.url));
-
     downloadBtn?.addEventListener('click', () => {
+        const worker = new Worker(new URL('/src/utils/worker.ts', import.meta.url));
         worker.onmessage = (e) => {
             const blob = e.data;
             const link = document.createElement('a');
@@ -271,9 +266,6 @@ function downloadZipFile(downloadBtn: Button, resultsSummary: Paragraph | undefi
         worker.postMessage({ feedback });
     });
 }
-
-skipQuiz?.addEventListener('click', resetQuiz);
-newGameBtn?.addEventListener('click', resetQuiz);
 
 function resetQuiz(e: Event) {
     e.preventDefault();
@@ -303,14 +295,24 @@ function resetQuiz(e: Event) {
     }
 }
 
-const shuffleArray = (array: string[]) => {
-    return array.sort(() => Math.random() - 0.5);
-};
-
 // function to convert html text into normal text
 function HTMLDecode(textString: string) {
     const doc = new DOMParser().parseFromString(textString, 'text/html');
     return doc.documentElement.textContent;
 }
 
-generateQuiz();
+//function to fetch all categories from the API
+async function getCategories() {
+    try {
+        const categories = await getFunction<Categories>('api_category.php');
+
+        categories.trivia_categories.forEach((c: Category) => {
+            const category = document.createElement('option');
+            category.setAttribute('value', c.id);
+            category.textContent = c.name;
+            categoriesList?.appendChild(category);
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
